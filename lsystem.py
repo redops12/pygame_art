@@ -38,7 +38,7 @@ def step_to_number_children(step: int):
         return random.choices(options, weights)[0]
     else:
         options = [0, 1, 2, 3, 4, 5]
-        weights = [0.2, 0.3, 0.15, 0.03, 0.005, 0.002]
+        weights = [0.2, 0.3, 0.15, 0.05, 0.005, 0.002]
         return random.choices(options, weights)[0]
     # return int(random.uniform(1, math.pow(step / 100, 5) + 2))
     # return random.randint(1 if step < MAX_CHILDREN / 3 else 0, MAX_CHILDREN)
@@ -51,7 +51,6 @@ pygame.display.set_caption("Starter Pygame Project")
 clock = pygame.time.Clock()
 vec2 = pygame.math.Vector2
 
-global_theta = 0
 
 class Node:
     parent: 'Node | None'
@@ -83,9 +82,10 @@ class Node:
             self.length = self.gen_length(parent.max_length)
             self.pos = self._calc_pos(parent.pos, self.theta, self.length)
             self.width = self._calc_width(parent.width, multiple_children)
+            self.offset = random.uniform(0, math.pi / 2)
 
     def get_theta(self):
-        return self.theta + global_theta
+        return self.theta + math.sin(pygame.time.get_ticks() / 2000 + self.offset) * math.pi / (40 * self.width)
 
     @staticmethod
     def _calc_pos(parent_pos: vec2, theta: float, length: float) -> vec2:
@@ -163,7 +163,6 @@ while running:
     new_nodes = []
 
     # 2. Update
-    global_theta = math.sin(pygame.time.get_ticks() / 1000) * math.pi / 50
     if new_time - last_time > 100 and len(list_of_nodes) < 30000:
         last_time = new_time
         for node in list_of_nodes:
